@@ -1,35 +1,33 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe"
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET ?? '', {
+  apiVersion: '2024-06-20',
+});
 
 export async function POST(request) {
+  try {
+    const body = await request.json();
+    console.log("Received lineItems:", body.lineItems);
 
-    // if (request.method !== 'POST') { return res.sendStatus(405) }
-    const body = await request.json()
-
-    if (body.lineItems.length === 0) {
-
-        return new Response('Error', {
-            status: 405,
-        });
+    if (!body.lineItems || body.lineItems.length === 0) {
+      return NextResponse.json({ error: "No line items provided" }, { status: 400 });
     }
 
-    try {
-        const stripe = new Stripe(process.env.STRIPE_SECRET ?? '', {
-            apiVersion: '2020-08-27'
-        })
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: body.lineItems,
+      success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'http://localhost:3000/cancel',
+    });
 
-        const session = await stripe.checkout.sessions.create({
-            success_url: 'http://localhost:3000/success',
-            cancel_url: 'http://localhost:3000/cancel',
-            line_items: body.lineItems,
-            mode: 'payment'
-        })
-        return NextResponse.json({ session })
-    } catch (err) {
-        console.log('BROKED')
-        console.log(err)
-        return new Response('Error', {
-            status: 405,
-        });
-    }
+    console.log("Stripe session created successfully:", session.id);
+    // ✅ Return session inside a `session` object
+    return NextResponse.json({ session: { url: session.url } }, { status: 201 });
+  } catch (err) {
+    console.error("Stripe Checkout Error:", err.message);
+    console.error("Error stack:", err.stack);
+    return NextResponse.json({ error: "Stripe session creation failed" }, { status: 500 });
+  }
 }

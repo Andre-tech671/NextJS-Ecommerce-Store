@@ -1,9 +1,12 @@
 "use client"
+
+import { use } from 'react'
 import useCart from "../(store)/store"
 
 export default function ProductPage(props) {
     const { searchParams } = props
-    const { price_id } = searchParams
+    const params = use(searchParams)
+    const { price_id } = params
     const product = useCart(state => state.product)
     const addItemToCart = useCart(state => state.addItemToCart)
     const { cost, productInfo, name, description } = product

@@ -1,60 +1,49 @@
-import { create } from 'zustand'
+"use client";
 
-const useCart = create(
-    (set, get) => ({
-        cart: [],
-        product: {},
-        openModal: false,
-        setOpenModal: () => {
-            set((state) => {
-                return {
-                    ...state,
-                    openModal: !state.openModal
-                }
-            })
-        },
-        setProduct: (params) => {
-            const { newProduct } = params
-            set((state) => {
-                return {
-                    ...state,
-                    product: newProduct
-                }
-            })
+import { create } from 'zustand';
 
-        },
-        addItemToCart: (params) => {
-            const { newItem } = params
-            set((state) => {
-                const newCart = [...state.cart, newItem]
-                return {
-                    ...state,
-                    cart: newCart
-                }
-            })
-        },
-        removeItemFromCart: (params) => {
-            const { itemIndex } = params
-            set((state) => {
-                const newCart = state.cart.filter((element, elementIndex) => {
-                    return elementIndex !== itemIndex
-                })
-                return {
-                    ...state,
-                    cart: newCart
-                }
-            })
-        },
-        emptyCart: () => {
-            set((state) => {
-                const newCart = []
-                return {
-                    ...state,
-                    cart: newCart
-                }
-            })
-        }
-    })
-)
+const useCart = create((set, get) => ({
+  cart: [],
+  product: {},
+  openModal: true,
+
+  setOpenModal: () => {
+    set((state) => ({
+      ...state,
+      openModal: !state.openModal,
+    }));
+  },
+
+  setProduct: ({ newProduct }) => {
+    set((state) => ({
+      ...state,
+      product: newProduct,
+    }));
+  },
+
+  addItemToCart: ({ newItem }) => {
+    set((state) => ({
+      ...state,
+      cart: [...state.cart, newItem],
+    }));
+  },
+
+  removeItemFromCart: ({ Itemindex }) => {
+    set((state) => {
+      const newCart = state.cart.filter((_, index) => index !== Itemindex);
+      return {
+        ...state,
+        cart: newCart,
+      };
+    });
+  },
+
+  emptyCart: () => {
+    set((state) => ({
+      ...state,
+      cart: [],
+    }));
+  },
+}));
 
 export default useCart;

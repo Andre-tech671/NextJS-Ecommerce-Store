@@ -1,15 +1,24 @@
 "use client"
 import { useRouter } from 'next/navigation'
-import React from 'react'
-import ReactDom from 'react-dom'
+import React, { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import useCart from './(store)/store'
 export default function Modal() {
+    const [mounted, setMounted] = useState(false)
     const closeModal = useCart(state => state.setOpenModal)
     const cartItems = useCart(state => state.cart)
     console.log(cartItems)
     const router = useRouter()
 
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
     async function checkout() {
+        if (cartItems.length === 0) {
+            alert('Your cart is empty. Please add items to your cart before checking out.')
+            return
+        }
         const lineItems = cartItems.map(cartItem => {
             console.log('CART ITEM: ', cartItem)
             return {
@@ -17,6 +26,7 @@ export default function Modal() {
                 quantity: 1
             }
         })
+        console.log('Sending lineItems to backend:', lineItems)
         const res = await fetch('/api/checkout', {
             method: 'POST',
             headers: {
@@ -25,10 +35,23 @@ export default function Modal() {
             body: JSON.stringify({ lineItems })
         })
         const data = await res.json()
+        console.log('Checkout response:', data)
+        if (data.error) {
+            console.error('Checkout error:', data.error)
+            alert('There was an error processing your checkout. Please try again.')
+            return
+        }
+        if (!data.session || !data.session.url) {
+            console.error('Invalid response:', data)
+            alert('Invalid response from server. Please try again.')
+            return
+        }
         router.push(data.session.url)
     }
 
-    return ReactDom.createPortal(
+    if (!mounted) return null
+
+    return ReactDOM.createPortal(
         <div className='fixed top-0 left-0 w-screen h-screen z-50'>
             <div onClick={closeModal} className='bg-transparent absolute  inset-0'> </div>
             <div className='flex flex-col bg-white absolute right-0 top-0 h-screen shadow-lg w-screen sm:w-96 max-w-screen gap-4'>
@@ -39,7 +62,7 @@ export default function Modal() {
                 </div>
                 <div className='p-4 overflow-scroll flex-1 flex flex-col gap-4'>
                     {cartItems.length === 0 ? (
-                        <p>There is nothing in your cart :'(</p>
+                        <p>There is nothing in your cart :&apos;(</p>
                     ) : (
                         <>
                             {cartItems.map((cartItem, itemIndex) => {

@@ -4,7 +4,7 @@ import ProductCard from './ProductCard'
 
 async function getStripeProducts() {
   const stripe = new Stripe(process.env.STRIPE_SECRET ?? '', {
-    apiVersion: '2020-08-27'
+    apiVersion: '2024-06-20'
   })
   const res = await stripe.prices.list({
     expand: ['data.product']
