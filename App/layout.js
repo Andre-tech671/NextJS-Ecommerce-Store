@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Fruit Shop",
-  description: "Hyperinflated fruit store - best prices 2033",
+  title: "ShopHub",
+  description: "Versatile e-commerce store - best prices",
 };
 
 import { Inter } from "next/font/google";

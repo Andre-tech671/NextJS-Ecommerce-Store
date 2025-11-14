@@ -1,4 +1,4 @@
-# Next.js 13 E-commerce Store
+# ShopHub - Next.js 13 E-commerce Store
 
 A full-stack e-commerce store built with Next.js 13, featuring Stripe payment integration, Tailwind CSS for styling, and Zustand for state management.
 
@@ -30,8 +30,8 @@ A full-stack e-commerce store built with Next.js 13, featuring Stripe payment in
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Andre-tech671/NextJS-Ecommerce-Store.git
-   cd nextjs13-store
+   git clone https://github.com/Andre-tech671/ShopHub.git
+   cd shophub
    ```
 
 2. **Install dependencies**
@@ -61,7 +61,7 @@ A full-stack e-commerce store built with Next.js 13, featuring Stripe payment in
 ## 🏗️ Project Structure
 
 ```
-nextjs13-store/
+shophub/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes
 │   │   └── checkout/      # Stripe checkout endpoint
